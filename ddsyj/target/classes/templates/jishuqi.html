@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计数器</title>
+    <!-- 先引入 Vue -->
+    <script src="https://vuejs.org/js/vue.js"></script>
+    <style>
+        .active{
+            color: red;
+        }
+        [v-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" v-cloak="">
+        <h2>计数器：{{message}}</h2>
+        <a class="active0" :class="getClasses()">看我</a>
+        <button @click="add">+</button>
+        <button @click="sub">-</button>
+        <!--        点击某个li字体显示为红色-->
+        <ul>
+            <li v-for="(item,index) in name" @click="check(index)" :class="">{{index+1}}-{{item}}</li>
+        </ul>
+    </div>
+    <script>
+        setTimeout(function () {
+            var app = new Vue({
+                el:'#app',
+                data:{
+                    message:0,
+                    isActive:false,
+                    active1:"active",
+                    active2:"bbbbbc",
+                    name:["小红","小明","小李"],
+                },
+                computed:{
+
+                },
+                methods:{
+                    add:function () {
+                        if (this.message < 10) {
+                            this.message++
+                        }else{
+                            alert("别点啦，到头了！");
+                        }
+
+                    },
+                    sub:function () {
+                        if (this.message > 0) {
+                            this.message--
+                        }else{
+                            alert("别点啦，我是有底线的！");
+                        }
+                    },
+                    check(index) {
+                        console.log(index);
+                        this.isActive = !this.isActive;
+                        document.querySelectorAll("li")[index].classList.add(this.active1);
+                    },
+
+                    getClasses() {
+                        return [this.active1,this.active2]
+                    }
+                }
+            })
+        },1000);
+    </script>
+</body>
+</html>
