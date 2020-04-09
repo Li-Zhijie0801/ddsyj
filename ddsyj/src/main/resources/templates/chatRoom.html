@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script>
+    var websocket = null;
+    // var name = prompt("请输入您要发送人名：");
+    // var code = prompt("请输入暗号：");
+    //判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        // alert(window.location.host);
+        // var url = "ws://localhost:8081/webSocketOneToOne/李志杰,123"
+        // var url = "ws://localhost:8081/webSocketOneToOne/"+name+","+code
+        // websocket = new WebSocket(url);
+    } else {
+        alert('当前浏览器 Not support websocket')
+    }
+
+    //手动链接
+    function linkWebSocket(){
+        var name = $("#myname").val();
+        let roomid = $("#roomid").val();
+        var url = "ws://localhost:8888/webSocketOneToOne/"+name+","+roomid;
+        websocket = new WebSocket(url);
+        //连接发生错误的回调方法
+        websocket.onerror = function() {
+            setMessageInnerHTML("WebSocket连接发生错误");
+        };
+        //连接成功建立的回调方法
+        websocket.onopen = function() {
+            // setMessageInnerHTML("WebSocket连接成功");
+            // websocket.send(JSON.stringify({'message':name+",连接成功",'role':"",'socketId':"123"}));
+        }
+        //接收到消息的回调方法
+        websocket.onmessage = function(event) {
+            console.log("回调信息",event);
+            setMessageInnerHTML(event.data);
+
+        }
+        //连接关闭的回调方法
+        websocket.onclose = function() {
+            setMessageInnerHTML("WebSocket连接关闭");
+        }
+        //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+        window.onbeforeunload = function() {
+            closeWebSocket();
+        }
+    }
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+
+    //保存聊天记录到数据库
+    function saveChatRecord() {
+        let myname = $("#myname").val();
+        let hname = $("#hname").val();
+        let text = $("#text").val();//信息
+        let roomid = $("#roomid").val();
+        if (text == "" || text == null) {
+            alert("消息不能为空！");
+            return false;
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8888/chatRecord/saveChatRecord',
+            data:{
+                sender : myname,
+                recipient : hname,
+                content : text,
+                files:roomid
+            },
+            success: function(msg){
+                console.log(msg);
+            },
+            error:function(msg) {
+                console.log(msg);
+            },
+        });
+    }
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+</head>
+<body>
+    你的名字：<input id="myname" type="text" /><input type="button" value="连接服务器" onclick="linkWebSocket()"><br>
+    房间号：<input id="roomid" type="text" >
+    他的名字：<input id="hname" type="text" /><br>
+    消息：<input id="text" type="text" />
+    <button class="send" onclick="saveChatRecord()">发送消息</button>
+    <button οnclick="closeWebSocket()" class="close">关闭WebSocket连接</button>
+    <div id="message"></div>
+</body>
+<script>
+    //单个发送消息
+    $(".send").click(function () {
+        var message = document.getElementById('text').value;
+        //message作为发送的信息，role作为发送的对象标识，socketId是此次会话的标识
+        var hname = document.getElementById('hname').value;
+        websocket.send(JSON.stringify({'message':message,'role':hname,'socketId':"123"}));
+    })
+
+    //关闭WebSocket连接
+    $(".close").click(function () {
+        websocket.close();
+    })
+</script>
+</html>
