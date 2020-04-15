@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 聊天记录表,本地修改了一段话
+ * 聊天记录表
  */
 @Data
 @Entity
