@@ -36,4 +36,5 @@ public class ChatRecord {
     @Column(length = 300)
     private String files;//文件
 
+
 }

@@ -23,6 +23,7 @@ public class Group {
     @Column(name = "group_name",length = 36)
     private String groupName;//群组名
 
+
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;//创建时间
