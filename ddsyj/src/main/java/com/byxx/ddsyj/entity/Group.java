@@ -11,7 +11,7 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "group")
+@Table(name = "t_group")
 public class Group {
 
     @Id

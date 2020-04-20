@@ -25,4 +25,5 @@ public class DicEmergencyProcess {
     private Date createTime;//创建时间
     private String founder;//创建人
     private Integer status;//是否有效
+    private String prev;//上一步
 }
